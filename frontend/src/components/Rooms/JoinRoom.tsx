@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -8,69 +8,57 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import UserNameSection from "../UserNameSection";
-import { User } from "@/types";
-import CustomRoom from "./CustomRoomSection";
 import QuickMatch from "../QuickMatchSection";
-import { useSocket } from "@/context/SocketProvider";
+import CustomRoom from "../Rooms/CustomRoomSection";
+import { useApp } from "@/context/AppProvider";
+import UserNameSection from "../UserNameSection";
 
 interface JoinRoomProps {
   children?: React.ReactNode;
-  user?: User | null;
-  handleAddUser: (e: React.FormEvent<HTMLFormElement>) => void;
-  IsAddingUser: boolean;
-  nameDialogOpen: boolean;
-  setNameDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const JoinRoom: React.FC<JoinRoomProps> = ({
-  children,
-  user,
-  IsAddingUser,
-  handleAddUser,
-  nameDialogOpen,
-  setNameDialogOpen,
-}) => {
+const JoinRoom: React.FC<JoinRoomProps> = ({ children }) => {
   const [openDialog, setOpenDialog] = React.useState(false);
+  const [openUsernameDialog, setOpenUsernameDialog] = useState(false);
+
+  const { user } = useApp();
 
   const handleOpenChange = () => {
+    if (!user?.userName) {
+      setOpenUsernameDialog(true);
+      return;
+    }
     setOpenDialog((prev) => !prev);
   };
 
   return (
-    <>
-      {!user ? (
-        <UserNameSection
-          handleAddUser={handleAddUser}
-          user={user}
-          nameDialogOpen={nameDialogOpen}
-          IsAddingUser={IsAddingUser}
-          setNameDialogOpen={setNameDialogOpen}
-        >
-          {children}
-        </UserNameSection>
-      ) : (
-        <Dialog open={openDialog} onOpenChange={handleOpenChange}>
-          <DialogTrigger asChild>{children}</DialogTrigger>
-          <DialogContent className="text-white sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Join Room</DialogTitle>
-              <DialogDescription>
-                Join a room to play with your friends
-              </DialogDescription>
-            </DialogHeader>
-            <Tabs defaultValue="quick_match" className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="quick_match">Quick Match</TabsTrigger>
-                <TabsTrigger value="custom_room">Custom Room</TabsTrigger>
-              </TabsList>
-              <QuickMatch user={user} />
-              <CustomRoom user={user} />
-            </Tabs>
-          </DialogContent>
-        </Dialog>
-      )}
-    </>
+    <React.Fragment>
+      <Dialog open={openDialog} onOpenChange={handleOpenChange}>
+        <DialogTrigger asChild>{children}</DialogTrigger>
+        <DialogContent className="text-white sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Join Room</DialogTitle>
+            <DialogDescription>
+              Join a room to play with your friends
+            </DialogDescription>
+          </DialogHeader>
+          <Tabs defaultValue="quick_match" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="quick_match">Quick Match</TabsTrigger>
+              <TabsTrigger value="custom_room">Custom Room</TabsTrigger>
+            </TabsList>
+            <QuickMatch />
+            <CustomRoom />
+          </Tabs>
+        </DialogContent>
+      </Dialog>
+
+      {/* DIALOG TO SET USERNAME IS NOT SET YET */}
+      <UserNameSection
+        nameDialogOpen={openUsernameDialog}
+        setNameDialogOpen={setOpenUsernameDialog}
+      />
+    </React.Fragment>
   );
 };
 

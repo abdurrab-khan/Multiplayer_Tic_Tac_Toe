@@ -12,7 +12,7 @@ export default class RoomController {
 
   public createRoom = AsyncHandler(async function (
     req: express.Request,
-    res: express.Response
+    res: express.Response,
   ) {
     const {
       roomName = "",
@@ -74,7 +74,7 @@ export default class RoomController {
         statusCode: 200,
         message: "Room created successfully",
         data: getAddedRoom,
-      })
+      }),
     );
   });
 
@@ -82,7 +82,7 @@ export default class RoomController {
 
   public getAllRooms = AsyncHandler(async function (
     req: express.Request,
-    res: express.Response
+    res: express.Response,
   ) {
     const rooms = await redis.KEYS("rooms:*");
 
@@ -91,7 +91,7 @@ export default class RoomController {
         new ResponseHandler({
           statusCode: 400,
           message: "Failed to get rooms",
-        })
+        }),
       );
     }
 
@@ -100,9 +100,9 @@ export default class RoomController {
         rooms.map(async (room) => {
           const roomList = await redis.lRange(room, 0, -1);
           return await Promise.all(
-            roomList.map(async (roomId) => await redis.hGetAll(roomId))
+            roomList.map(async (roomId) => await redis.hGetAll(roomId)),
           );
-        })
+        }),
       )
     ).flat();
 
@@ -111,7 +111,7 @@ export default class RoomController {
         statusCode: 200,
         data: allRooms,
         message: "Rooms fetched successfully",
-      })
+      }),
     );
   });
 
@@ -119,7 +119,7 @@ export default class RoomController {
 
   public getUserRooms = AsyncHandler(async function (
     req: express.Request,
-    res: express.Response
+    res: express.Response,
   ) {
     const { userId } = req.params;
     const roomKey = `rooms:${userId}`;
@@ -127,7 +127,7 @@ export default class RoomController {
     const room = await redis.lRange(roomKey, 0, -1);
 
     const allRoomsData = await Promise.all(
-      room.map((roomId) => redis.hGetAll(roomId))
+      room.map((roomId) => redis.hGetAll(roomId)),
     );
 
     return res.status(200).json(
@@ -135,7 +135,7 @@ export default class RoomController {
         statusCode: 200,
         data: allRoomsData,
         message: "Room fetched successfully",
-      })
+      }),
     );
   });
 
@@ -143,9 +143,16 @@ export default class RoomController {
 
   public getRoomById = AsyncHandler(async function (
     req: express.Request,
-    res: express.Response
+    res: express.Response,
   ) {
     const { roomId } = req.params;
+
+    if (!(typeof roomId === "string" && roomId.trim() !== "")) {
+      throw new ApiError({
+        status: 400,
+        message: "Room id is required",
+      });
+    }
 
     const room = await redis.hGetAll(roomId);
 
@@ -154,7 +161,7 @@ export default class RoomController {
         new ResponseHandler({
           statusCode: 404,
           message: "Room not found",
-        })
+        }),
       );
     }
 
@@ -163,7 +170,7 @@ export default class RoomController {
         statusCode: 200,
         data: room,
         message: "Room fetched successfully",
-      })
+      }),
     );
   });
 }

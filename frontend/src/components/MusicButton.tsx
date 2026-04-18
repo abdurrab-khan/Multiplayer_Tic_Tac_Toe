@@ -1,8 +1,8 @@
-import { useSocket } from "@/context/SocketProvider";
+import { useApp } from "@/context/AppProvider";
 import { Button } from "./ui/button";
 
 function MusicButton() {
-  const { music, setMusic } = useSocket();
+  const { music, setMusic } = useApp();
 
   const handleMusicPlay = () => {
     setMusic((prev) => !prev);

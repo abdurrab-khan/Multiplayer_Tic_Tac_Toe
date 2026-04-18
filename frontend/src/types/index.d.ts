@@ -28,7 +28,7 @@ export declare type Room = {
   password: string;
   activeUsers: string;
   playerCount: string;
-  type: ROOM_TYPE;
+  type: "public" | "private";
   createdBy: string;
 };
 

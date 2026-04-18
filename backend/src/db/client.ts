@@ -5,16 +5,7 @@ const redis = createClient({
     host: process.env.REDIS_HOST || "localhost",
     port: Number(process.env.REDIS_PORT) || 6379,
   },
-  password: process.env.REDIS_PASSWORD || "",
+  password: process.env.REDIS_PASSWORD || "secret_pass",
 });
-
-redis.on("error", (error) => {
-  console.error("Redis error:", error);
-});
-
-(async () => {
-  await redis.connect();
-  console.log("Connected to Redis");
-})();
 
 export default redis;

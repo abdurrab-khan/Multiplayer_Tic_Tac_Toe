@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,44 +10,78 @@ import {
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { Loader2 } from "lucide-react";
-import { User } from "@/types";
+import { useToast } from "@/hooks/use-toast";
+import { addUser, updateUser } from "@/lib/action/user.action";
+import { useApp } from "@/context/AppProvider";
 
 interface UserNameSectionProps {
-  children: React.ReactNode;
-  handleAddUser: (e: React.FormEvent<HTMLFormElement>) => void;
-  IsAddingUser: boolean;
-  user?: User | null;
   nameDialogOpen: boolean;
+  children?: React.ReactNode;
   setNameDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 function UserNameSection({
-  handleAddUser,
-  IsAddingUser,
-  user,
   nameDialogOpen,
   children,
   setNameDialogOpen,
 }: UserNameSectionProps) {
-  const [inputUserName, setInputUserName] = useState("");
-  const [inputError, setInputError] = useState(false);
+  const { user, setUser } = useApp();
+  const { toast } = useToast();
 
-  const handleSpace = useCallback((elem: string) => {
-    return elem.replace(/\s/g, "_");
-  }, []);
+  const [inputUserName, setInputUserName] = useState("");
+  const [formStatus, setFormStatus] = useState<"idle" | "submitting" | "error">(
+    "idle",
+  );
+
+  const username = inputUserName.replace(/\s/g, "_");
+
+  const handleAddUser = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setFormStatus("submitting");
+
+    try {
+      const formData = new FormData(e.currentTarget);
+      const userName = formData.get("name") as string;
+
+      if (!userName) {
+        setFormStatus("error");
+        return;
+      }
+
+      if (user) {
+        const updatedUser = { ...user, userName };
+        await updateUser(updatedUser);
+        setUser(updatedUser);
+      } else {
+        const newUser = await addUser({ userName });
+        if (newUser) {
+          setUser(newUser);
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "Error",
+        description:
+          error instanceof Error ? error?.message : "Something went wrong",
+        variant: "destructive",
+      });
+    } finally {
+      setFormStatus("idle");
+      setNameDialogOpen(false);
+    }
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
+    const { value: username } = e.target;
+    const isLimitExceeded = username.trim().length > 6;
 
-    if (value && value.length > 6) {
-      setInputError(true);
-      return;
-    } else if (value.length <= 6 && inputError) {
-      setInputError(false);
+    if (isLimitExceeded) {
+      if (formStatus !== "error") setFormStatus("error");
+    } else {
+      if (formStatus === "error") setFormStatus("idle");
+      setInputUserName(username);
     }
-
-    const name = handleSpace(value);
-    setInputUserName(name);
   };
 
   useEffect(() => {
@@ -56,7 +90,7 @@ function UserNameSection({
 
   return (
     <Dialog open={nameDialogOpen} onOpenChange={setNameDialogOpen}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+      {children && <DialogTrigger asChild>{children}</DialogTrigger>}
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>
@@ -71,17 +105,22 @@ function UserNameSection({
             <Input
               name="name"
               placeholder="Enter your name"
-              value={inputUserName}
+              value={username}
               onChange={handleInputChange}
             />
-            {inputError && (
-              <span className="text-sm text-white">
-                Name should not exceed 6 characters
-              </span>
-            )}
+            {formStatus === "error" &&
+              (username.length === 0 || username.length >= 6) && (
+                <span className="text-sm text-white">
+                  {username.trim().length >= 6
+                    ? "Name should not exceed 6 characters"
+                    : "Name is required"}
+                </span>
+              )}
             <Button size="full" variant="gameBtn" type="submit">
-              Play{" "}
-              {IsAddingUser && <Loader2 size={24} className="animate-spin" />}
+              {user ? "Update Name" : "Save Name"}
+              {formStatus === "submitting" && (
+                <Loader2 size={24} className="animate-spin" />
+              )}
             </Button>
           </div>
         </form>

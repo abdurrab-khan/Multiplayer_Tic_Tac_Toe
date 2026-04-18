@@ -1,6 +1,6 @@
-import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import express from "express";
 import { createServer } from "node:http";
 
 dotenv.config();
@@ -9,13 +9,12 @@ const app = express();
 const server = createServer(app);
 
 // Middlewares
-
 app.use(
   cors({
     origin: "http://localhost:5173",
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
-  })
+  }),
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

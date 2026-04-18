@@ -1,7 +1,6 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useSocket } from "@/hooks/useSocket";
 
 export const SocketStatus: React.FC = () => {
   const { socket, isConnected, reconnect } = useSocket();

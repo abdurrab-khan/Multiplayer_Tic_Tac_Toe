@@ -1,7 +1,7 @@
-import { useSocket } from "@/context/SocketProvider";
+import { useApp } from "@/context/AppProvider";
 
 function Score() {
-  const { user } = useSocket();
+  const { user } = useApp();
 
   if (!user || user?.tic_tac_toe_high_score <= 0) return <></>;
 
@@ -9,7 +9,7 @@ function Score() {
     <div className="flex items-center gap-3">
       <p
         className={
-          "text-customYellow hover:text-customDarkYellow select-none font-gameFont text-3xl font-bold tabular-nums transition-all duration-300"
+          "select-none font-gameFont text-3xl font-bold tabular-nums text-customYellow transition-all duration-300 hover:text-customDarkYellow"
         }
       >
         {user?.tic_tac_toe_high_score}

@@ -1,11 +1,33 @@
 import server from "./server";
+import redis from "./db/client";
 import SocketController from "./controller/socket.controller";
 
 const socketController = new SocketController();
 socketController.playGame();
 
-server.listen(process.env.PORT, () => {
-  console.log(
-    `Server running on port ${process.env.PORT} 🚀 || http://localhost:${process.env.PORT}`
-  );
-});
+const PORT = process.env.PORT || 4000;
+
+redis
+  .connect()
+  .then((r) => {
+    // Test the Redis connection by sending a ping command
+    r.ping()
+      .then((pong) => {
+        console.log("Redis ping response:", pong);
+      })
+      .catch((error) => {
+        console.error("Failed to ping Redis:", error);
+      });
+
+    console.log("Connected to Redis");
+
+    // Start the server after successful Redis connection
+    server.listen(PORT, () => {
+      console.log(
+        `Server running on port ${PORT} 🚀 || http://localhost:${PORT}`,
+      );
+    });
+  })
+  .catch((error) => {
+    console.error("Failed to connect to Redis:", error);
+  });

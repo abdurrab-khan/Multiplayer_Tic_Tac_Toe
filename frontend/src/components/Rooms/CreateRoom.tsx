@@ -7,22 +7,19 @@ import { useToast } from "@/hooks/use-toast";
 import { addNewRoom } from "@/lib/action/room.action";
 import { Room } from "@/types";
 import { CREATE_BTN_ROOM_TEXT, CREATE_HEADER_TEXT } from "@/lib/constants";
+import { useApp } from "@/context/AppProvider";
 
 function CreateRoom({
-  userName,
-  userId,
-  setListOurRooms,
-  setListAllRooms,
+  setRooms,
 }: {
-  userName: string;
-  userId: string;
-  setListOurRooms: React.Dispatch<React.SetStateAction<Room[]>>;
-  setListAllRooms: React.Dispatch<React.SetStateAction<Room[]>>;
+  setRooms: React.Dispatch<React.SetStateAction<Room[]>>;
 }) {
-  const [isEntering, setOnSubmit] = React.useState(false);
-  const [roomName, setRoomName] = React.useState("");
-  const [RoomDialog, setRoomDialog] = React.useState(false);
   const { toast } = useToast();
+  const userId = useApp().user!.userId;
+
+  const [roomName, setRoomName] = React.useState("");
+  const [isEntering, setOnSubmit] = React.useState(false);
+  const [roomDialog, setRoomDialog] = React.useState(false);
 
   const handleCreateRoom = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -55,8 +52,7 @@ function CreateRoom({
       });
 
       if (response.status === "success") {
-        setListOurRooms((prev) => [...prev, response.data]);
-        setListAllRooms((prev) => [...prev, response.data]);
+        setRooms((prev) => [...prev, response.data]);
         toast({
           title: "Success",
           description: "Room created successfully",
@@ -75,13 +71,14 @@ function CreateRoom({
   };
 
   useEffect(() => {
-    if (userName) {
-      setRoomName(userName + "'s_Room");
+    if (roomDialog) {
+      const randomName = `Room-${Math.random().toString(36).substring(2, 7)}`;
+      setRoomName(randomName);
     }
-  }, [userName]);
+  }, [roomDialog]);
 
   return (
-    <Dialog open={RoomDialog} onOpenChange={setRoomDialog}>
+    <Dialog open={roomDialog} onOpenChange={setRoomDialog}>
       <DialogTrigger asChild>
         <Button variant={"gameBtn"}>
           <span>Create Room</span>

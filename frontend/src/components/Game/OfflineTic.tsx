@@ -1,10 +1,10 @@
 import GameBoard from "./GameBoard";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PlayerWin from "./PlayerWin";
 import { Player, WinStatusType } from "@/types";
 import { INITIAL_WIN_STATUS, WIN_PATTERNS } from "@/lib/constants";
-import { useSocket } from "@/context/SocketProvider";
+import { useApp } from "@/context/AppProvider";
 
 function OfflineTic() {
   const turnArr = ["X", "O"];
@@ -15,7 +15,7 @@ function OfflineTic() {
   const [winStatus, setWinStatus] = useState<WinStatusType>(INITIAL_WIN_STATUS);
   const counter = useRef(0);
   const navigate = useNavigate();
-  const { music } = useSocket();
+  const { music } = useApp();
   const moveAudioRef = useRef(new Audio("/audio/move.mp3"));
   const winAudioRef = useRef(new Audio("/audio/win.mp3"));
 

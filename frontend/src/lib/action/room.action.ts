@@ -10,7 +10,7 @@ export async function getAllRoom() {
   return response.data;
 }
 
-export async function getMyRoom({ userId }: { userId: string }) {
+export async function getMyRoom(userId: string) {
   const response = await axios.get(`/api/room/${userId}`);
 
   if (response.status !== 200) {

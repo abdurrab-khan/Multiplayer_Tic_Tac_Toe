@@ -1,13 +1,13 @@
 import { Outlet } from "react-router-dom";
-import SocketProvider from "./context/SocketProvider";
+import AppProvider from "./context/AppProvider";
 
 function App() {
   return (
-    <SocketProvider>
+    <AppProvider>
       <main className="home_page font-gameFont">
         <Outlet />
       </main>
-    </SocketProvider>
+    </AppProvider>
   );
 }
 

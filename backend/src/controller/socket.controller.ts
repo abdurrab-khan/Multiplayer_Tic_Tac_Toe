@@ -11,7 +11,7 @@ import {
   User,
 } from "../types";
 import { v4 as uuid } from "uuid";
-import { playerSymbol, WINNING_PATTERN } from "../lib/consts";
+import { WINNING_PATTERN } from "../lib/consts";
 
 interface PlayerInfo {
   userId: string;
@@ -121,7 +121,7 @@ export default class SocketController {
   private async on(
     socket: Socket,
     event: string,
-    callback: (data: any) => void
+    callback: (data: any) => void,
   ) {
     socket.on(event, callback);
   }
@@ -384,7 +384,7 @@ export default class SocketController {
             data: { roomName },
           });
         }
-      }
+      },
     );
   }
 
@@ -397,7 +397,7 @@ export default class SocketController {
       }
 
       const suitableRoom = availableRooms.find(
-        (room) => room.clientCount === 1
+        (room) => room.clientCount === 1,
       );
 
       if (suitableRoom) {
@@ -557,7 +557,6 @@ export default class SocketController {
   }
 
   // ? Emitters
-
   private emit_gameError({ socket, message, data }: GameError) {
     socket.emit("game_error", {
       success: false,

@@ -1,7 +1,7 @@
-import React, { memo } from "react";
+import React from "react";
+import { Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
 import { ENTER_BTN_ROOM_TEXT } from "@/lib/constants";
 
 interface RoomFormProps {
@@ -23,16 +23,25 @@ function RoomForm({
   header,
   roomPassword,
 }: RoomFormProps) {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+
+    if (value.length <= 10) {
+      setRoomName(value);
+    }
+  };
+
   return (
-    <>
+    <React.Fragment>
       <h1 className="text-lg font-semibold">{header}</h1>
       <form onSubmit={handleRoomSubmit}>
         <div className="mt-1.5 flex flex-col gap-4">
           <Input
             name="roomName"
             placeholder="Enter room name"
+            maxLength={10}
             value={roomName}
-            onChange={(e) => setRoomName(e.target.value)}
+            onChange={handleInputChange}
           />
           {((roomPassword && btnText === ENTER_BTN_ROOM_TEXT) ||
             btnText === "Create Room") && (
@@ -52,8 +61,8 @@ function RoomForm({
           </Button>
         </div>
       </form>
-    </>
+    </React.Fragment>
   );
 }
 
-export default memo(RoomForm);
+export default RoomForm;

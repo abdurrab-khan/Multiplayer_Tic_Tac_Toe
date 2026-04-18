@@ -1,7 +1,7 @@
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 import { getRoomById } from "@/lib/action/room.action";
 import { createContext, useState, useContext, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
 
 interface RoomContextType {
   roomId: string;
