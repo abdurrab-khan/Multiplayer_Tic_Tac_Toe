@@ -1,9 +1,5 @@
 import server from "./server";
 import redis from "./db/client";
-import SocketController from "./controller/socket.controller";
-
-const socketController = new SocketController();
-socketController.playGame();
 
 const PORT = process.env.PORT || 4000;
 

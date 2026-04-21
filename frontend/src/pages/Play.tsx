@@ -1,17 +1,22 @@
-import OfflineTic from "@/components/Game/OfflineTic";
+import React from "react";
+import { useParams } from "react-router-dom";
 import OnlineTic from "@/components/Game/OnlineTic";
-import RoomProvider from "@/context/RoomContext";
+import OfflineTic from "@/components/Game/OfflineTic";
 import SocketProvider from "@/context/SocketProvider";
 
 function Play() {
-  const roomId = window.location.pathname.split("/").pop();
+  const { roomId } = useParams();
 
   return (
-    <SocketProvider>
-      <RoomProvider>
-        {roomId && roomId.startsWith("room") ? <OnlineTic /> : <OfflineTic />}
-      </RoomProvider>
-    </SocketProvider>
+    <React.Fragment>
+      {roomId ? (
+        <SocketProvider>
+          <OnlineTic roomId={roomId} />
+        </SocketProvider>
+      ) : (
+        <OfflineTic />
+      )}
+    </React.Fragment>
   );
 }
 

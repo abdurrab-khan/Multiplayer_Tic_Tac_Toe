@@ -1,6 +1,6 @@
 import ResponseHandler from "../utils/ResponseHandler";
 import redis from "../db/client";
-import { CreateRoom } from "../types";
+import { CreateRoom } from "../lib/types";
 import express from "express";
 import { AsyncHandler } from "../utils/AsyncHanlder";
 import { ApiError } from "../utils/ErrorHandler";

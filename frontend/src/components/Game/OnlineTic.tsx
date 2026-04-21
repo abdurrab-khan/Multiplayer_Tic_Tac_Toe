@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import GameBoard from "./GameBoard";
-import { useRoomContext } from "@/context/RoomContext";
 import { useSocket } from "@/context/SocketProvider";
 import { useNavigate } from "react-router-dom";
 import PlayerLeft from "./PlayerLeft";
@@ -8,8 +7,14 @@ import PlayerWin from "./PlayerWin";
 import { GameState, OnlineGameData, RoomResult, WinStatusType } from "@/types";
 import { INITIAL_WIN_STATUS } from "@/lib/constants";
 import { increaseHighScore as increaseHighScoreInDB } from "@/lib/action/user.action";
+import React from "react";
+import { useApp } from "@/context/AppProvider";
 
-function OnlineTic() {
+interface OnlineTicProps {
+  roomId: string;
+}
+
+function OnlineTic({ roomId }: OnlineTicProps) {
   const [turn, setTurn] = useState<string>("");
   const [gameData, setGameData] = useState<GameState>();
   const [winStatus, setWinStatus] = useState<WinStatusType>(INITIAL_WIN_STATUS);
@@ -17,14 +22,15 @@ function OnlineTic() {
   const [onlineGameData, setOnlineGameData] = useState<OnlineGameData>();
   const navigate = useNavigate();
   const { socket } = useSocket();
-  const { user, setUser, music } = useSocket();
-  const { roomId } = useRoomContext();
+  const { user, setUser, music } = useApp();
   const moveAudioRef = useRef(new Audio("/audio/move.mp3"));
   const winAudioRef = useRef(new Audio("/audio/win.mp3"));
   const loseAudioRef = useRef(new Audio("/audio/lose.m4a"));
 
   const handleClick = useCallback(
     ({ index }: { index: number }) => {
+      console.log("Emitting move: ", { boxId: index, roomId });
+
       if (gameData?.board[index] && gameData?.currentTurn !== user?.userId)
         return;
 
@@ -182,8 +188,12 @@ function OnlineTic() {
     };
   }, [gameData, increaseHighScore, music, roomId, socket, user]);
 
+  useEffect(() => {
+    console.log("Is socket connected? ", socket.connected);
+  }, [socket.connected]);
+
   return (
-    <>
+    <React.Fragment>
       <GameBoard
         handleExitBtn={handleExit}
         handleClick={handleClick}
@@ -205,7 +215,7 @@ function OnlineTic() {
         }
         handlePlayAgain={handlePlayAgain}
       />
-    </>
+    </React.Fragment>
   );
 }
 

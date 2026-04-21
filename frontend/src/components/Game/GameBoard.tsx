@@ -61,7 +61,10 @@ function GameBoard({
                   key={index}
                   id={index.toString()}
                   className={`flex aspect-square cursor-pointer items-center justify-center`}
-                  onClick={() => handleClick({ index })}
+                  onClick={() => {
+                    console.log("Box clicked: ", index);
+                    handleClick({ index });
+                  }}
                 >
                   {item && (
                     <div className="select-none">

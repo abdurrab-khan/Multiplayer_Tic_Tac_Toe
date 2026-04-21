@@ -8,6 +8,10 @@ dotenv.config();
 const app = express();
 const server = createServer(app);
 
+// Socket.io setup
+import { initSocket } from "./config/initSocket";
+initSocket(server);
+
 // Middlewares
 app.use(
   cors({

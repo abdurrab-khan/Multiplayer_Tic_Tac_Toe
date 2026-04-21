@@ -9,7 +9,7 @@ import {
   PlayGame,
   RoomResultResponse,
   User,
-} from "../types";
+} from "../lib/types";
 import { v4 as uuid } from "uuid";
 import { WINNING_PATTERN } from "../lib/consts";
 

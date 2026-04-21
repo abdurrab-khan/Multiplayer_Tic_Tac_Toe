@@ -8,7 +8,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { EmojiPath } from "@/lib/Data";
-import { useRoomContext } from "@/context/RoomContext";
+import { useParams } from "react-router-dom";
+import { useApp } from "@/context/AppProvider";
 
 interface EmojiProps {
   emoji: string;
@@ -16,35 +17,35 @@ interface EmojiProps {
   setPopOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Emoji: React.FC<EmojiProps> = ({
-  emoji,
-  setDisableBtn,
-  setPopOpen,
-}: EmojiProps) => {
-  const { user, socket } = useSocket();
-  const { roomId } = useRoomContext();
+// const Emoji: React.FC<EmojiProps> = ({
+//   emoji,
+//   setDisableBtn,
+//   setPopOpen,
+// }: EmojiProps) => {
+//   const { user, socket } = useSocket();
+//   const { roomId } = useParams();
 
-  const handleClick = () => {
-    if (user) {
-      setDisableBtn(true);
-      setPopOpen(false);
-      socket.emit("sendEmoji", {
-        roomId,
-        emoji,
-        from: user.userId,
-      });
-    }
-  };
+//   const handleClick = () => {
+//     if (user) {
+//       setDisableBtn(true);
+//       setPopOpen(false);
+//       socket.emit("sendEmoji", {
+//         roomId,
+//         emoji,
+//         from: user.userId,
+//       });
+//     }
+//   };
 
-  return (
-    <button
-      className="flex h-12 w-12 shrink-0 select-none items-center justify-center rounded-lg border-b-2 border-gray-400 bg-white shadow-sm transition-all hover:scale-105 hover:border-b-[3px] hover:shadow-md"
-      onClick={handleClick}
-    >
-      <img src={`/emojies/${emoji}`} alt={emoji} className="h-9 w-9" />
-    </button>
-  );
-};
+//   return (
+//     <button
+//       className="flex h-12 w-12 shrink-0 select-none items-center justify-center rounded-lg border-b-2 border-gray-400 bg-white shadow-sm transition-all hover:scale-105 hover:border-b-[3px] hover:shadow-md"
+//       onClick={handleClick}
+//     >
+//       <img src={`/emojies/${emoji}`} alt={emoji} className="h-9 w-9" />
+//     </button>
+//   );
+// };
 
 interface PlayerProps {
   name: string;
@@ -130,9 +131,11 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
   currentTurn,
   opponentId,
 }) => {
-  const { user } = useSocket();
+  // const { user } = useSocket();
   const opponentSymbol = mySymbol === "X" ? "O" : "X";
-  const { roomId } = useRoomContext();
+  const { user } = useApp();
+  const { roomId } = useParams();
+
   const [disableEmojiBtn, setDisableEmojiBtn] = React.useState(false);
   const [popOpen, setPopOpen] = React.useState(false);
 
@@ -157,14 +160,14 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
               </PopoverTrigger>
               <PopoverContent className="w-80">
                 <div className="flex flex-wrap items-center gap-3">
-                  {EmojiPath.map((emojiName, i) => (
+                  {/* {EmojiPath.map((emojiName, i) => (
                     <Emoji
                       key={i}
                       emoji={emojiName}
                       setDisableBtn={setDisableEmojiBtn}
                       setPopOpen={setPopOpen}
                     />
-                  ))}
+                  ))} */}
                 </div>
               </PopoverContent>
             </Popover>
