@@ -2,11 +2,16 @@ import { Room } from "../lib/types";
 
 const gameState: { [key: string]: Room } = {};
 
+// Handle game state management for each room
 const createGameState = (roomId: string) => {
   gameState[roomId] = {
     board: Array(9).fill(""),
     player: [],
   };
+  return gameState[roomId];
+};
+
+const getRoomById = (roomId: string) => {
   return gameState[roomId];
 };
 
@@ -21,24 +26,4 @@ const deleteGameState = (roomId: string) => {
   delete gameState[roomId];
 };
 
-const getGameState = (roomId: string) => {
-  return gameState[roomId] || createGameState(roomId);
-};
-
-const findAvailableRoom = () => {
-  for (const roomId in gameState) {
-    if (gameState[roomId].player.length < 2) {
-      return roomId;
-    }
-  }
-
-  return null;
-};
-
-export {
-  getGameState,
-  createGameState,
-  resetGameState,
-  deleteGameState,
-  findAvailableRoom,
-};
+export { createGameState, resetGameState, deleteGameState, getRoomById };

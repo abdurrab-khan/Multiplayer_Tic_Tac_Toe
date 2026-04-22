@@ -13,6 +13,7 @@ function useSocketConnection() {
     if (!user?.userId || !roomId) return;
 
     if (!socket.connected) {
+      socket.io.opts.query = { userId: user.userId };
       socket.connect();
     }
 

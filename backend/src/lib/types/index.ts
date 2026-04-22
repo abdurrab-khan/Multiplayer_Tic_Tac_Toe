@@ -2,7 +2,7 @@ interface Player {
   playerId: string;
   playerName: string;
   playerSymbol: "X" | "O";
-  status: "waiting" | "playing" | "left";
+  status: "online" | "offline";
 }
 
 interface Room {

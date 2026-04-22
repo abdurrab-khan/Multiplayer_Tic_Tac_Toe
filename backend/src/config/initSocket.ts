@@ -1,5 +1,5 @@
 import { Server } from "socket.io";
-import registerEvents from "../events";
+import { registerGameEvents, registerInitialStartEvents } from "../events";
 
 let io: Server | null = null;
 
@@ -11,8 +11,8 @@ const initSocket = (server: any) => {
       },
     });
   }
-
-  registerEvents(io);
+  registerGameEvents(io);
+  registerInitialStartEvents(io);
 };
 
 const getIO = () => io;
